@@ -1,4 +1,4 @@
-"""Command-line interface: taskbook add|list|done|rm."""
+"""Command-line interface: taskbook add|list|done|edit|rm."""
 
 from __future__ import annotations
 
@@ -28,6 +28,10 @@ def build_parser() -> argparse.ArgumentParser:
     lst.add_argument("--all", action="store_true", help="include completed tasks")
     done = sub.add_parser("done", help="mark a task completed")
     done.add_argument("id", type=int)
+    edit = sub.add_parser("edit", help="change the title or priority of a task")
+    edit.add_argument("id", type=int)
+    edit.add_argument("--title")
+    edit.add_argument("--priority", choices=VALID_PRIORITIES)
     rm = sub.add_parser("rm", help="remove a task")
     rm.add_argument("id", type=int)
     return parser
@@ -53,6 +57,10 @@ def main(argv: list[str] | None = None) -> int:
             print(f"{len(tasks.pending())} pending")
         elif args.command == "done":
             print(f"completed {tasks.complete(args.id).id}")
+        elif args.command == "edit":
+            if args.title is None and args.priority is None:
+                raise TaskError("nothing to edit: pass --title and/or --priority")
+            print(f"edited {tasks.edit(args.id, args.title, args.priority).id}")
         elif args.command == "rm":
             print(f"removed {tasks.remove(args.id).id}")
     except TaskError as exc:
