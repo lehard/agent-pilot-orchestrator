@@ -48,6 +48,18 @@ class TaskList:
         task.done = True
         return task
 
+    def edit(self, task_id: int, title: str | None = None, priority: str | None = None) -> Task:
+        """Change the title and/or priority of a task, keeping its id and status."""
+        task = self.get(task_id)
+        edited = Task(
+            id=task.id,
+            title=task.title if title is None else title,
+            priority=task.priority if priority is None else priority,
+            done=task.done,
+        )
+        self.tasks[self.tasks.index(task)] = edited
+        return edited
+
     def remove(self, task_id: int) -> Task:
         task = self.get(task_id)
         self.tasks.remove(task)
