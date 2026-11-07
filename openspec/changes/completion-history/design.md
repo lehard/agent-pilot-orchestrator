@@ -11,7 +11,7 @@ See proposal.md - Why. Current state:
 - `load` builds tasks with `Task(**item)`: an entry with a missing or extra key
   raises a raw `TypeError` instead of `StorageError`, and field types are not checked.
 - No undo command exists; `rm` deletes a task entirely.
-- Only the standard library is used; Python >= 3.11 (see pyproject.toml).
+- Only the standard library is used; Python >= 3.12 (see pyproject.toml).
 
 The storage option itself (versioned JSON vs SQLite vs separate journal) is the
 decision recorded in add.md. This design describes the recommended option
@@ -40,9 +40,9 @@ writes); a top-level object must carry an integer `version` in the supported set
 compared in add.md.
 
 ### Migration: in memory on read, persisted on next write, with a backup
-`load` returns the tasks plus the version it read. Version 1 entries are validated
+Version 1 entries are validated
 with the version 1 field set and get `completed_at = None`. `save` writes version 2;
-if the loaded version was 1 it first copies the original to `<file>.v1.bak`
+if the file currently on disk is version 1 it first copies the original to `<file>.v1.bak`
 (refusing if that exists). Rejected alternative: rewrite the file during `load` -
 a read would then mutate data and make `list` unsafe on a file the user wants to
 keep for an older release.
