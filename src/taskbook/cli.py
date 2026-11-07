@@ -50,6 +50,7 @@ def main(argv: list[str] | None = None) -> int:
             shown = tasks.tasks if args.all else tasks.pending()
             for task in shown:
                 print(format_task(task))
+            print(f"{len(tasks.pending())} pending")
         elif args.command == "done":
             print(f"completed {tasks.complete(args.id).id}")
         elif args.command == "rm":
